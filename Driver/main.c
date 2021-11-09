@@ -34,7 +34,7 @@ typedef int (MicrosoftCallingType* MmCopyVirtualMemory)(
 
 // Our protocol GUID (should be different for every driver)
 static const EFI_GUID ProtocolGuid
-= { 0x2f84893e, 0xfd5e, 0x2038, {0x8d, 0x9e, 0x20, 0xa7, 0xaf, 0x9c, 0x32, 0xf1} };
+= { 0x2f84893e, 0xfd5e, 0x2038, {0x8d, 0x9e, 0x20, 0xa7, 0xaf, 0x9c, 0x32, 0xf1} }; //TODO: Change this
 
 // VirtualAddressMap GUID (gEfiEventVirtualAddressChangeGuid)
 static const EFI_GUID VirtualGuid
@@ -207,8 +207,8 @@ SetVirtualAddressMapEvent(
 	RT->ConvertPointer(0, (void**)&oSetWakeupTime);
 	RT->ConvertPointer(0, (void**)&oSetVirtualAddressMap);
 	RT->ConvertPointer(0, (void**)&oConvertPointer);
-	//RT->ConvertPointer(0, (void**)&oGetVariable);
-	//RT->ConvertPointer(0, (void**)&oGetNextVariableName);
+	RT->ConvertPointer(0, (void**)&oGetVariable);
+	RT->ConvertPointer(0, (void**)&oGetNextVariableName);
 	//RT->ConvertPointer(0, (void**)&oSetVariable);
 	RT->ConvertPointer(0, (void**)&oGetNextHighMonotonicCount);
 	RT->ConvertPointer(0, (void**)&oResetSystem);
@@ -250,8 +250,7 @@ ExitBootServicesEvent(
 	Print(L"Driver seems to be working as expected! Windows is booting now...\n");
 }
 
-// Replaces service table pointer with desired one
-// returns original
+// (Un)hooks a service table pointer, replacing its value with NewFunction and returning the original address.
 VOID*
 SetServicePointer(
 	IN OUT EFI_TABLE_HEADER* ServiceTableHeader,
@@ -268,7 +267,7 @@ SetServicePointer(
 	ASSERT(BS->CalculateCrc32 != NULL);
 
 	// Raise task priority level
-	CONST EFI_TPL Tpl = BS->RaiseTPL(TPL_HIGH_LEVEL);
+	CONST EFI_TPL Tpl = BS->RaiseTPL(TPL_HIGH_LEVEL); // Note: implies cli
 
 	// Swap the pointers
 	// GNU-EFI and InterlockedCompareExchangePointer 
@@ -436,15 +435,15 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* SystemTable)
 	Print(L"Hooked ConvertPointer: 0x%x -> 0x%x\n", (VOID*)oConvertPointer, (VOID*)&HookedConvertPointer);
 #endif // _DEBUG
 
-//	oGetVariable = (EFI_GET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetVariable, (VOID**)&HookedGetVariable);
-//#ifdef _DEBUG
-//	Print(L"Hooked GetVariable: 0x%x -> 0x%x\n", (VOID*)oGetVariable, (VOID*)&HookedGetVariable);
-//#endif // _DEBUG
-//
-//	oGetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextVariableName, (VOID**)&HookedGetNextVariableName);
-//#ifdef _DEBUG
-//	Print(L"Hooked GetNextVariableName: 0x%x -> 0x%x\n", (VOID*)oGetNextVariableName, (VOID*)&HookedGetNextVariableName);
-//#endif // _DEBUG
+	oGetVariable = (EFI_GET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetVariable, (VOID**)&HookedGetVariable);
+#ifdef _DEBUG
+	Print(L"Hooked GetVariable: 0x%x -> 0x%x\n", (VOID*)oGetVariable, (VOID*)&HookedGetVariable);
+#endif // _DEBUG
+
+	oGetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextVariableName, (VOID**)&HookedGetNextVariableName);
+#ifdef _DEBUG
+	Print(L"Hooked GetNextVariableName: 0x%x -> 0x%x\n", (VOID*)oGetNextVariableName, (VOID*)&HookedGetNextVariableName);
+#endif // _DEBUG
 	 
 	//oSetVariable = (EFI_SET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetVariable, (VOID**)&HookedSetVariable);
 //#ifdef _DEBUG

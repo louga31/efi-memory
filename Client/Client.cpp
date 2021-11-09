@@ -45,7 +45,7 @@ int main()
 {
 	if (!Driver::initialize() || !CheckDriverStatus()) {
 		UNICODE_STRING VariableName = RTL_CONSTANT_STRING(VARIABLE_NAME);
-		myNtSetSystemEnvironmentValueEx(
+		NtSetSystemEnvironmentValueEx(
 			&VariableName,
 			&DummyGuid,
 			0,

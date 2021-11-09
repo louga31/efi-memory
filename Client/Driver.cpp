@@ -4,9 +4,6 @@
 HANDLE Driver::driverH = 0;
 uintptr_t Driver::currentProcessId = 0;
 GUID DummyGuid = { 2 }; //don't matter our var never will be saved
-mRtlAdjustPrivilege myRtlAdjustPrivilege = (mRtlAdjustPrivilege)NULL;
-mNtSetSystemEnvironmentValueEx myNtSetSystemEnvironmentValueEx = (mNtSetSystemEnvironmentValueEx)NULL;
-mNtQuerySystemInformation myNtQuerySystemInformation = (mNtQuerySystemInformation)NULL;
 
 NTSTATUS SetSystemEnvironmentPrivilege(BOOLEAN Enable, PBOOLEAN WasEnabled)
 {
@@ -14,7 +11,7 @@ NTSTATUS SetSystemEnvironmentPrivilege(BOOLEAN Enable, PBOOLEAN WasEnabled)
 		*WasEnabled = FALSE;
 
 	BOOLEAN SeSystemEnvironmentWasEnabled;
-	const NTSTATUS Status = myRtlAdjustPrivilege(SE_SYSTEM_ENVIRONMENT_PRIVILEGE,
+	const NTSTATUS Status = RtlAdjustPrivilege(SE_SYSTEM_ENVIRONMENT_PRIVILEGE,
 		Enable,
 		FALSE,
 		&SeSystemEnvironmentWasEnabled);
@@ -28,7 +25,7 @@ NTSTATUS SetSystemEnvironmentPrivilege(BOOLEAN Enable, PBOOLEAN WasEnabled)
 void Driver::SendCommand(MemoryCommand* cmd)
 {
 	UNICODE_STRING VariableName = RTL_CONSTANT_STRING(VARIABLE_NAME);
-	myNtSetSystemEnvironmentValueEx(
+	NtSetSystemEnvironmentValueEx(
 		&VariableName,
 		&DummyGuid,
 		cmd,
@@ -134,7 +131,7 @@ uintptr_t GetKernelModuleAddress(char* module_name)
 	void* buffer = nullptr;
 	DWORD buffer_size = 0;
 
-	NTSTATUS status = myNtQuerySystemInformation(static_cast<SYSTEM_INFORMATION_CLASS>(SystemModuleInformation), buffer, buffer_size, &buffer_size);
+	NTSTATUS status = NtQuerySystemInformation(static_cast<SYSTEM_INFORMATION_CLASS>(SystemModuleInformation), buffer, buffer_size, &buffer_size);
 
 	while (status == STATUS_INFO_LENGTH_MISMATCH)
 	{
@@ -144,7 +141,7 @@ uintptr_t GetKernelModuleAddress(char* module_name)
 		if (buffer == 0) {
 			return 0;
 		}
-		status = myNtQuerySystemInformation(static_cast<SYSTEM_INFORMATION_CLASS>(SystemModuleInformation), buffer, buffer_size, &buffer_size);
+		status = NtQuerySystemInformation(static_cast<SYSTEM_INFORMATION_CLASS>(SystemModuleInformation), buffer, buffer_size, &buffer_size);
 	}
 
 	if (!NT_SUCCESS(status))
@@ -179,22 +176,13 @@ uintptr_t GetKernelModuleAddress(char* module_name)
 bool Driver::initialize() {
 	currentProcessId = GetCurrentProcessId();
 	BOOLEAN SeSystemEnvironmentWasEnabled;
-	HMODULE ntmodule = LoadLibraryW(L"ntdll.dll");
-	BYTE ntqsi[] = { 'N','t','Q','u','e','r','y','S','y','s','t','e','m','I','n','f','o','r','m','a','t','i','o','n',0 };
-	BYTE nssevex[] = { 'N','t','S','e','t','S','y','s','t','e','m','E','n','v','i','r','o','n','m','e','n','t','V','a','l','u','e','E','x',0 };
-	BYTE rtlajp[] = { 'R','t','l','A','d','j','u','s','t','P','r','i','v','i','l','e','g','e',0 };
-	myNtQuerySystemInformation = (mNtQuerySystemInformation)GetProcAddress(ntmodule, (char*)ntqsi);
-	myNtSetSystemEnvironmentValueEx = (mNtSetSystemEnvironmentValueEx)GetProcAddress(ntmodule, (char*)nssevex);
-	myRtlAdjustPrivilege = (mRtlAdjustPrivilege)GetProcAddress(ntmodule, (char*)rtlajp);
-	//memset(ntqsi, 0, sizeof(ntqsi));
-	//memset(nssevex, 0, sizeof(nssevex));
-	//memset(rtlajp, 0, sizeof(rtlajp));
 
 	NTSTATUS status = SetSystemEnvironmentPrivilege(true, &SeSystemEnvironmentWasEnabled);
 
 	if (!NT_SUCCESS(status)) {
 		return false;
 	}
+
 
 	BYTE nstosname[] = { 'n','t','o','s','k','r','n','l','.','e','x','e',0 };
 	uintptr_t kernelModuleAddress = GetKernelModuleAddress((char*)nstosname);

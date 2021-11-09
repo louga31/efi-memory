@@ -1,7 +1,8 @@
 #pragma once
+
 #include <Windows.h>
 #include <winternl.h>
-//#pragma comment(lib, "ntdll.lib")
+#pragma comment(lib, "ntdll.lib")
 #include <stdio.h>
 
 #include "../Driver/protocol.h"
@@ -20,12 +21,29 @@
 
 extern GUID DummyGuid;
 
-typedef NTSTATUS(*mRtlAdjustPrivilege)(ULONG Privilege, BOOLEAN Enable, BOOLEAN Client, PBOOLEAN WasEnabled);
-typedef NTSTATUS(*mNtSetSystemEnvironmentValueEx)(PUNICODE_STRING VariableName, LPGUID VendorGuid, PVOID Value, ULONG ValueLength, ULONG Attributes);
-typedef NTSTATUS(*mNtQuerySystemInformation)(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
-extern mRtlAdjustPrivilege myRtlAdjustPrivilege;
-extern mNtSetSystemEnvironmentValueEx myNtSetSystemEnvironmentValueEx;
-extern mNtQuerySystemInformation myNtQuerySystemInformation;
+extern "C"
+{
+	NTSYSAPI
+		NTSTATUS
+		NTAPI
+		RtlAdjustPrivilege(
+			_In_ ULONG Privilege,
+			_In_ BOOLEAN Enable,
+			_In_ BOOLEAN Client,
+			_Out_ PBOOLEAN WasEnabled
+		);
+
+	NTSYSCALLAPI
+		NTSTATUS
+		NTAPI
+		NtSetSystemEnvironmentValueEx(
+			_In_ PUNICODE_STRING VariableName,
+			_In_ LPGUID VendorGuid,
+			_In_reads_bytes_opt_(ValueLength) PVOID Value,
+			_In_ ULONG ValueLength,
+			_In_ ULONG Attributes
+		);
+}
 
 constexpr auto STATUS_INFO_LENGTH_MISMATCH = 0xC0000004;
 
