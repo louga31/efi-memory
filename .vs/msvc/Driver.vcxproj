@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <ItemGroup Label="ProjectConfigurations">
+  <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM">
       <Configuration>Debug</Configuration>
       <Platform>ARM</Platform>
@@ -166,7 +166,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -182,7 +182,7 @@
       <RandomizedBaseAddress />
     </Link>
   </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\gnu-efi\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -196,7 +196,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -227,7 +227,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -257,7 +257,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -285,7 +285,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -313,7 +313,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -341,7 +341,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -369,7 +369,7 @@
       <AdditionalOptions>/Oi- /utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
-      <SubSystem>EFI Runtime</SubSystem>
+      <SubSystem>EFI Application</SubSystem>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

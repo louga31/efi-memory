@@ -19,7 +19,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\main.c">
+    <ClCompile Include="..\..\Loader\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,24 +18,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Driver.cpp">
+    <ClCompile Include="..\..\Client\Driver.cpp">
       <Filter>Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Client.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Driver.h">
+    <ClInclude Include="..\..\Client\Driver.h">
       <Filter>Driver</Filter>
     </ClInclude>
-    <ClInclude Include="vector.h">
+    <ClInclude Include="..\..\Client\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Client\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -207,8 +207,8 @@ SetVirtualAddressMapEvent(
 	RT->ConvertPointer(0, (void**)&oSetWakeupTime);
 	RT->ConvertPointer(0, (void**)&oSetVirtualAddressMap);
 	RT->ConvertPointer(0, (void**)&oConvertPointer);
-	RT->ConvertPointer(0, (void**)&oGetVariable);
-	RT->ConvertPointer(0, (void**)&oGetNextVariableName);
+	//RT->ConvertPointer(0, (void**)&oGetVariable);
+	//RT->ConvertPointer(0, (void**)&oGetNextVariableName);
 	//RT->ConvertPointer(0, (void**)&oSetVariable);
 	RT->ConvertPointer(0, (void**)&oGetNextHighMonotonicCount);
 	RT->ConvertPointer(0, (void**)&oResetSystem);
@@ -401,50 +401,80 @@ efi_main(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* SystemTable)
 
 	// Hook SetVariable (should not fail)
 	oSetVariable = (EFI_SET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetVariable, (VOID**)&HookedSetVariable);
+#ifdef _DEBUG
 	Print(L"Hooked SetVariable: 0x%x -> 0x%x\n", (VOID*)oSetVariable, (VOID*)&HookedSetVariable);
+#endif // _DEBUG
 
 	// Hook all the other runtime services functions
 	oGetTime = (EFI_GET_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetTime, (VOID**)&HookedGetTime);
+#ifdef _DEBUG
 	Print(L"Hooked GetTime: 0x%x -> 0x%x\n", (VOID*)oGetTime, (VOID*)&HookedGetTime);
+#endif // _DEBUG
 
 	oSetTime = (EFI_SET_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetTime, (VOID**)&HookedSetTime);
+#ifdef _DEBUG
 	Print(L"Hooked SetTime: 0x%x -> 0x%x\n", (VOID*)oSetTime, (VOID*)&HookedSetTime);
+#endif // _DEBUG
 
 	oGetWakeupTime = (EFI_GET_WAKEUP_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetWakeupTime, (VOID**)&HookedGetWakeupTime);
+#ifdef _DEBUG
 	Print(L"Hooked GetWakeupTime: 0x%x -> 0x%x\n", (VOID*)oGetWakeupTime, (VOID*)&HookedGetWakeupTime);
+#endif // _DEBUG
 
 	oSetWakeupTime = (EFI_SET_WAKEUP_TIME)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetWakeupTime, (VOID**)&HookedSetWakeupTime);
+#ifdef _DEBUG
 	Print(L"Hooked SetWakeupTime: 0x%x -> 0x%x\n", (VOID*)oSetWakeupTime, (VOID*)&HookedSetWakeupTime);
+#endif // _DEBUG
 
 	oSetVirtualAddressMap = (EFI_SET_VIRTUAL_ADDRESS_MAP)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetVirtualAddressMap, (VOID**)&HookedSetVirtualAddressMap);
+#ifdef _DEBUG
 	Print(L"Hooked SetVirtualAddressMap: 0x%x -> 0x%x\n", (VOID*)oSetVirtualAddressMap, (VOID*)&HookedSetVirtualAddressMap);
+#endif // _DEBUG
 
 	oConvertPointer = (EFI_CONVERT_POINTER)SetServicePointer(&RT->Hdr, (VOID**)&RT->ConvertPointer, (VOID**)&HookedConvertPointer);
+#ifdef _DEBUG
 	Print(L"Hooked ConvertPointer: 0x%x -> 0x%x\n", (VOID*)oConvertPointer, (VOID*)&HookedConvertPointer);
+#endif // _DEBUG
 
-	oGetVariable = (EFI_GET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetVariable, (VOID**)&HookedGetVariable);
-	Print(L"Hooked GetVariable: 0x%x -> 0x%x\n", (VOID*)oGetVariable, (VOID*)&HookedGetVariable);
-
-	oGetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextVariableName, (VOID**)&HookedGetNextVariableName);
-	Print(L"Hooked GetNextVariableName: 0x%x -> 0x%x\n", (VOID*)oGetNextVariableName, (VOID*)&HookedGetNextVariableName);
+//	oGetVariable = (EFI_GET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetVariable, (VOID**)&HookedGetVariable);
+//#ifdef _DEBUG
+//	Print(L"Hooked GetVariable: 0x%x -> 0x%x\n", (VOID*)oGetVariable, (VOID*)&HookedGetVariable);
+//#endif // _DEBUG
+//
+//	oGetNextVariableName = (EFI_GET_NEXT_VARIABLE_NAME)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextVariableName, (VOID**)&HookedGetNextVariableName);
+//#ifdef _DEBUG
+//	Print(L"Hooked GetNextVariableName: 0x%x -> 0x%x\n", (VOID*)oGetNextVariableName, (VOID*)&HookedGetNextVariableName);
+//#endif // _DEBUG
 	 
 	//oSetVariable = (EFI_SET_VARIABLE)SetServicePointer(&RT->Hdr, (VOID**)&RT->SetVariable, (VOID**)&HookedSetVariable);
+//#ifdef _DEBUG
 	//Print(L"Hooked SetVariable: 0x%x -> 0x%x\n", (VOID*)oSetVariable, (VOID*)&HookedSetVariable);
+//#endif // _DEBUG
 
 	oGetNextHighMonotonicCount = (EFI_GET_NEXT_HIGH_MONO_COUNT)SetServicePointer(&RT->Hdr, (VOID**)&RT->GetNextHighMonotonicCount, (VOID**)&HookedGetNextHighMonotonicCount);
+#ifdef _DEBUG
 	Print(L"Hooked GetNextHighMonotonicCount: 0x%x -> 0x%x\n", (VOID*)oGetNextHighMonotonicCount, (VOID*)&HookedGetNextHighMonotonicCount);
+#endif // _DEBUG
 
 	oResetSystem = (EFI_RESET_SYSTEM)SetServicePointer(&RT->Hdr, (VOID**)&RT->ResetSystem, (VOID**)&HookedResetSystem);
+#ifdef _DEBUG
 	Print(L"Hooked ResetSystem: 0x%x -> 0x%x\n", (VOID*)oResetSystem, (VOID*)&HookedResetSystem);
+#endif // _DEBUG
 
 	oUpdateCapsule = (EFI_UPDATE_CAPSULE)SetServicePointer(&RT->Hdr, (VOID**)&RT->UpdateCapsule, (VOID**)&HookedUpdateCapsule);
+#ifdef _DEBUG
 	Print(L"Hooked UpdateCapsule: 0x%x -> 0x%x\n", (VOID*)oUpdateCapsule, (VOID*)&HookedUpdateCapsule);
+#endif // _DEBUG
 
 	oQueryCapsuleCapabilities = (EFI_QUERY_CAPSULE_CAPABILITIES)SetServicePointer(&RT->Hdr, (VOID**)&RT->QueryCapsuleCapabilities, (VOID**)&HookedQueryCapsuleCapabilities);
+#ifdef _DEBUG
 	Print(L"Hooked QueryCapsuleCapabilities: 0x%x -> 0x%x\n", (VOID*)oQueryCapsuleCapabilities, (VOID*)&HookedQueryCapsuleCapabilities);
+#endif // _DEBUG
 
 	oQueryVariableInfo = (EFI_QUERY_VARIABLE_INFO)SetServicePointer(&RT->Hdr, (VOID**)&RT->QueryVariableInfo, (VOID**)&HookedQueryVariableInfo);
+#ifdef _DEBUG
 	Print(L"Hooked QueryVariableInfo: 0x%x -> 0x%x\n", (VOID*)oQueryVariableInfo, (VOID*)&HookedQueryVariableInfo);
+#endif // _DEBUG
 
 	// Print confirmation text
 	gST->ConOut->SetAttribute(gST->ConOut, EFI_GREEN | EFI_BACKGROUND_BLACK);

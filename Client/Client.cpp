@@ -9,15 +9,16 @@ bool CheckDriverStatus() {
 	int icheck = 82;
 	NTSTATUS status = 0;
 
+	int checked = Driver::read<int>(GetCurrentProcessId(), (uintptr_t)&icheck, &status);
+	if (checked != icheck) {
+		return false;
+	}
+
 	uintptr_t BaseAddr = Driver::GetBaseAddress(GetCurrentProcessId());
 	if (BaseAddr == 0) {
 		return false;
 	}
 
-	int checked = Driver::read<int>(GetCurrentProcessId(), (uintptr_t)&icheck, &status);
-	if (checked != icheck) {
-		return false;
-	}
 	return true;
 }
 
@@ -67,20 +68,33 @@ int main()
 		std::cout << "What do you want to do?\n";
 		std::cout << "1 - Get process base address by PID\n";
 		std::cout << "2 - Read process memory by PID\n";
-		std::cout << "3 - Read process memory by offset\n";
-		std::cout << "4 - Exit\n";
+		std::cout << "3 - Read process memory by Offset\n";
+		std::cout << "4 - Read process memory by Name and Offset\n";
+		std::cout << "5 - Write process memory by PID\n";
+		std::cout << "6 - Write process memory by Name and Offset\n";
+		std::cout << "7 - Exit\n";
 		int action;
 		std::cin >> action;
 		std::cin.clear();
 		std::cin.ignore();
-		if (action == 4) {
+		if (action == 7) {
 			std::cout << "Exiting Byee!\n";
 			return 0;
 		}
 
-		if (action == 1 || action == 2) {
+		if (action == 1 || action == 2 || action == 5) {
 			std::cout << "Process ID:\n";
 			std::cin >> pid;
+			std::cin.clear();
+			std::cin.ignore();
+		}
+
+		if (action == 4 || action == 6) {
+			std::cout << "Process Name:\n";
+			std::string name;
+			std::cin >> name;
+			pid = GetProcessIdByName((wchar_t*)std::wstring(name.begin(), name.end()).c_str());
+			BaseAddr = Driver::GetBaseAddress(pid);
 			std::cin.clear();
 			std::cin.ignore();
 		}
@@ -118,7 +132,36 @@ int main()
 
 			system("pause");
 		}
-		else if (action == 3) {
+		else if (action == 5) {
+			std::cout << "Address(Hex):\n";
+			uintptr_t addr = 0;
+			std::string addrData;
+			std::cin >> addrData;
+			std::cin.clear();
+			std::cin.ignore();
+			addr = std::stoull(addrData, nullptr, 16);
+			std::cout << "Enter data:\n";
+			int data;
+			std::cin >> data;
+			std::cin.clear();
+			std::cin.ignore();
+
+			Driver::write<int>(pid, addr, data, NULL);
+
+			BYTE* buffer = new BYTE[sizeof(int)];
+			memset(buffer, 0, sizeof(int));
+			Driver::read_memory(pid, addr, (uintptr_t)&buffer[0], sizeof(int));
+			std::cout << "Readed:\n";
+			for (size_t i = 0; i < sizeof(int); i++) {
+				printf("%02X ", buffer[i]);
+			}
+			printf("\n\n");
+
+			delete[] buffer;
+
+			system("pause");
+		}
+		else if (action == 3 || action == 4) {
 			std::cout << "Offset(Hex):\n";
 			uintptr_t offset = 0;
 			std::string offsetData;

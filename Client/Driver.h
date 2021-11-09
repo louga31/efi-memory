@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <winternl.h>
-#pragma comment(lib, "ntdll.lib")
+//#pragma comment(lib, "ntdll.lib")
 #include <stdio.h>
 
 #include "../Driver/protocol.h"
